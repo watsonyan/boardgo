@@ -1,0 +1,7 @@
+(;AB[fr][dr][ep][dp]AW[hr][iq][hp][fp][fo][eo][bq][cn][co]C[]N[虎]AP[MultiGo:3.9.4]
+GN[死活题集锦_死活部分1]US[关山利夫 关山利一 著，  肖静波录入， thales修订整理为标准sgf]SO[flygo.net]
+
+(;B[br];W[cq];B[cr];W[ar]N[黑失败])
+(;B[cq]C[正解！只此一手。]N[正解];W[br];B[eq]C[白2时，黑3是好手]C[白2时，黑3是好手。之后，白走a位黑也可轻松做活。]
+LB[es:a];W[es];B[fs];W[ds];B[cr];W[cs];B[bs]C[黑9扑];W[as];B[er]C[黑11打吃时白不能粘。]
+N[黑活]))
