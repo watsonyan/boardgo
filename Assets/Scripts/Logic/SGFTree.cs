@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
 namespace game.logic
 {
@@ -223,10 +224,51 @@ namespace game.logic
                     else lineStart = false;
                 }
                 tree.ReadNodes(tree.root, reader);
+
                 list.Add(tree);
             }
             goon:
             return list;
+        }
+
+        public static void Save(string filePath, string content)
+        {
+            using (StreamWriter sr = new StreamWriter(filePath, false, Encoding.UTF8))
+            {
+                sr.Write(content);
+            }
+        }
+
+        public static string GetSgfString(TreeNode root)
+        {
+            StringBuilder res = new StringBuilder("(");
+            while(true)
+            {
+                res.Append(Node.ExportAction(root));
+                if (root.Children.Count == 0) break;
+                else if (root.Children.Count > 1)
+                {
+                    LinkedListNode<TreeNode> node = root.Children.First;
+                    while (node != null)
+                    {
+                        res.Append(GetSgfString(node.Value));
+                        node = node.Next;
+                    }
+                    break;
+                }
+                else
+                {
+                    root = root.Children.First.Value;
+                }
+            }
+            res.Append(")");
+            return res.ToString();
+        }
+
+        public static void ExportToSgf(string filePath, TreeNode root)
+        {
+            string res = SGFTree.GetSgfString(root);
+            SGFTree.Save(filePath, res);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace game.logic
@@ -17,12 +18,12 @@ namespace game.logic
             isMain = false;
         }
 
-        //public Node(Node node)
-        //{
-        //    //actions = new LinkedList<Action>(node.Actions);
-        //    //eptTreeNum = node.EptTreeNum;
-        //    //isMain = node.IsMain;
-        //}
+        public Node(Node node)
+        {
+            actions = node.Actions;
+            eptTreeNum = node.EptTreeNum;
+            isMain = node.IsMain;
+        }
 
         public bool IsMain
         {
@@ -219,6 +220,19 @@ namespace game.logic
                 }
             }
         }
-             
+
+        public static string ExportAction(Node node)
+        {
+            StringBuilder res = new StringBuilder(";");
+
+            LinkedListNode<Action> actionNode = node.First;
+            while (actionNode != null)
+            {
+                res.Append(actionNode.Value.Export());
+                actionNode = actionNode.Next;
+            }
+
+            return res.ToString();
+        }
     }
 }

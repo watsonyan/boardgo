@@ -11,6 +11,7 @@ public class Board : MonoBehaviour, IPointerClickHandler {
     //public static int radius = 1;
     public Camera UICamera;
     public int gap = 50;//90 and 100
+    public int dotSize = 20;//20 30 40
     public int lineWidth = 2;
     public int size = 9;
     public Vector2 lowerLeft = Vector2.zero;
@@ -26,6 +27,8 @@ public class Board : MonoBehaviour, IPointerClickHandler {
     public Transform lines;
     public Transform stones;
 
+    SGFTree Tree = null;
+
 
     private Field[,] fields;
 
@@ -33,17 +36,9 @@ public class Board : MonoBehaviour, IPointerClickHandler {
 
     private Dictionary<int, int> linesData = new Dictionary<int, int>();
 
-
     // Use this for initialization
     void Start () {
-        Debug.Log(Application.dataPath + "/Res/sgf/001.sgf");
-        
-        //GenerateLinesData(size);
-        GenerateBoard(size);
 
-        //GenerateStone(0, 0, false);
-        //GenerateStone(1, 1, false);
-        //GenerateStone(3, 5, true);
     }
 	
 	// Update is called once per frame
@@ -57,10 +52,40 @@ public class Board : MonoBehaviour, IPointerClickHandler {
         {
             Load(Application.dataPath + "/Res/sgf/001.sgf");
         }
+
+
+        if (GUI.Button(new Rect(100, 300, 100, 60), "load"))
+        {
+            StartNewGame(size);
+        }
+    }
+
+    void StartNewGame(int size)
+    {
+        this.size = size;
+
+        Tree = new SGFTree(new TreeNode(1));
+        SetInfomation();
+
+        SetupGame(Tree.Root);
+        //GenerateBoard(size);
+    }
+
+    void SetInfomation()
+    {
+        if (Tree == null) return;
+        Tree.Root.SetAction("AP", "WeGo", true);
+        Tree.Root.SetAction("SZ", "" + this.size, true);
+        Tree.Root.SetAction("GM", "1", true);
+        Tree.Root.SetAction("FF", "4", true);
+
+
+        Debug.Log(SGFTree.GetSgfString(Tree.Root));
     }
 
     void GenerateBoard(int size)
     {
+        SetInfomation();
         GenerateLinesData(size);
         GenerateBoard();
     }
@@ -68,11 +93,20 @@ public class Board : MonoBehaviour, IPointerClickHandler {
     void GenerateLinesData(int n)
     {
         if (n == 9)
+        {
             gap = 100;
-        else if (n == 11)
-            gap = 90;
+            dotSize = 40;
+        }
+        else if (n == 13)
+        {
+            gap = 80;
+            dotSize = 30;
+        }
         else
+        {
             gap = 50;
+            dotSize = 20;
+        }
         linesData.Clear();
         for (int i = 0; i <= n / 2; ++i)
         {
@@ -125,6 +159,13 @@ public class Board : MonoBehaviour, IPointerClickHandler {
 
     void ClearBoard()
     {
+        //delete all stones on the board
+        for (int i = stones.childCount - 1; i >= 0; --i)
+        {
+            Transform trans = stones.GetChild(i);
+            Destroy(trans.gameObject);
+        }
+        //delete all lines of the board
         for (int i = lines.childCount - 1; i >= 0; --i)
         {
             Transform trans = lines.GetChild(i);
@@ -166,11 +207,11 @@ public class Board : MonoBehaviour, IPointerClickHandler {
         {
             // Create an instance of StreamReader to read from a file.
             // The using statement also closes the StreamReader.
-            using (StreamReader sr = new StreamReader(filePath))
+            using (StreamReader sr = new StreamReader(filePath, System.Text.Encoding.GetEncoding("gb2312"), true))
             {
                 List<SGFTree> trees = SGFTree.Load(sr);
-                SGFTree Tree = trees[0];
-                Init(Tree.Root);
+                Tree = trees[0];
+                SetupGame(Tree.Root);
             }
         }
         catch (Exception e)
@@ -181,7 +222,7 @@ public class Board : MonoBehaviour, IPointerClickHandler {
         }
     }
 
-    void Init(TreeNode tree)
+    void SetupGame(TreeNode tree)
     {
         LinkedListNode<Action> node = tree.First;
         while (node != null)

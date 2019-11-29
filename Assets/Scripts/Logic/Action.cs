@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 namespace game.logic
 {
@@ -108,6 +109,24 @@ namespace game.logic
                 )
                 return false;
             else return true;
+        }
+
+        public string Export()
+        {
+            StringBuilder res = new StringBuilder("");
+
+            res.Append(this.Type);
+            LinkedListNode<string> argsNode = this.Args;
+            while (argsNode != null)
+            {
+                //ExportSgf(actionNode.Value);
+                res.Append("[");
+                res.Append(argsNode.Value);
+                res.Append("]");
+                argsNode = argsNode.Next;
+            }
+
+            return res.ToString();
         }
     }
 }

@@ -22,12 +22,11 @@ namespace game.logic
             this.IsMain = node.IsMain;
         }
 
-        //public TreeNode(Node node)
-        //{
-            
-        //    children = new LinkedList<TreeNode>();
-        //    parent = null;
-        //}
+        public TreeNode(Node node) : base(node)
+        {
+            children = new LinkedList<TreeNode>();
+            parent = null;
+        }
 
         public void SetMain(TreeNode node)
         {
